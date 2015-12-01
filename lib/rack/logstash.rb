@@ -92,8 +92,8 @@ module Rack
 				'type'                => 'rack-logstash',
 				'tags'                => @tags,
 				'clientip'            => req.ip,
-				'timestamp'           => formatted_time(env['rack.logstash.start_time']),
-				'@timestamp'          => formatted_time(env['rack.logstash.start_time']),
+				'timestamp'           => iso_time(env['rack.logstash.start_time']),
+				'@timestamp'          => iso_time(env['rack.logstash.start_time']),
 				'verb'                => req.request_method,
 				'request'             => req.path_info_and_query_string,
 				'httpversion'         => req.http_version,
@@ -153,8 +153,8 @@ module Rack
 			}
 		end
 
-		def formatted_time(t)
-			t.strftime("%d/%b/%Y:%H:%M:%S %z")
+		def iso_time(t)
+			t.utc.strftime("%FT%T.%LZ")
 		end
 	end
 end
