@@ -41,8 +41,8 @@ module Rack
 							end
 							Thread.stop
 						rescue Exception => ex
-							puts "sender_thread died!  #{ex.message} (#{ex.class})"
-							puts ex.backtrace.map { |l| "  #{l}" }
+							@stderr.puts "sender_thread died!  #{ex.message} (#{ex.class})"
+							$stderr.puts ex.backtrace.map { |l| "  #{l}" }
 						end
 					end
 				end
@@ -52,7 +52,7 @@ module Rack
 				begin
 					@socket ||= TCPSocket.new(host, port)
 				rescue Errno::ECONNREFUSED, Errno::ETIMEDOUT => ex
-					puts "#{ex.class}... retrying"
+					$stderr.puts "rack-logstash: #{ex.class} while attempting to connect to #{host}:#{port}... retrying"
 					sleep 0.1
 					retry
 				end
