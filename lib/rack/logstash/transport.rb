@@ -13,8 +13,13 @@ module Rack
 			end
 
 			def send(s)
-				@blmutex.synchronize { @backlog << s }
-				@sender.run
+				begin
+					@blmutex.synchronize { @backlog << s }
+					@sender.run
+				rescue StandardError => ex
+					$stderr.puts "Failed to send message: #{ex.message} (#{ex.class})"
+					$stderr.puts ex.backtrace.map { |l| "  #{l}" }
+				end
 			end
 
 			def drain
@@ -40,9 +45,14 @@ module Rack
 								end
 							end
 							Thread.stop
-						rescue Exception => ex
-							@stderr.puts "sender_thread died!  #{ex.message} (#{ex.class})"
+						rescue StandardError => ex
+							$stderr.puts "sender_thread crashed!  #{ex.message} (#{ex.class})"
 							$stderr.puts ex.backtrace.map { |l| "  #{l}" }
+							sleep 0.1
+						rescue Exception => ex
+							$stderr.puts "sender_thread is being killed by #{ex.class}"
+							@sender = nil
+							raise
 						end
 					end
 				end
