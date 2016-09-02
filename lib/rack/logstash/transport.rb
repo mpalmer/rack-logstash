@@ -70,9 +70,9 @@ module Rack
 				@parsed_url ||= URI(@url).tap do |url|
 					if url.scheme != "tcp"
 						raise ArgumentError,
-								"Unknown scheme for Logstash server URL: " +
-								url.scheme.inspect +
-								" (we only accept 'tcp')"
+						      "Unknown scheme for Logstash server URL: " +
+						      url.scheme.inspect +
+						      " (we only accept 'tcp')"
 					end
 				end
 			end

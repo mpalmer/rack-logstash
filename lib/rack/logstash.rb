@@ -131,9 +131,9 @@ module Rack
 			Hash[
 				env.map do |k, v|
 					unless v.is_a? Hash or
-						    v.is_a? Array or
-						    v.is_a? String or
-						    v.is_a? Numeric
+					       v.is_a? Array or
+					       v.is_a? String or
+					       v.is_a? Numeric
 						next nil
 					end
 
