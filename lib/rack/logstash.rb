@@ -17,7 +17,12 @@ module Rack
 
 			begin
 				@app.call(env).tap do |response|
-					log_request(env, response)
+					begin
+						log_request(env, response)
+					rescue StandardError => ex
+						$stderr.puts "Failed to log request: #{ex.message} (#{ex.class})"
+						$stderr.puts ex.backtrace.map { |l| "  #{l}" }
+					end
 				end
 			rescue StandardError => ex
 				log_exception(env, ex)
