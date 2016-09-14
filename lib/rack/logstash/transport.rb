@@ -1,6 +1,7 @@
 require 'socket'
 require 'thread'
 require 'uri'
+require 'json'
 
 module Rack
 	class Logstash
@@ -12,10 +13,14 @@ module Rack
 				@sender  = sender_thread
 			end
 
-			def send(s)
+			def send(msg)
 				begin
-					@blmutex.synchronize { @backlog << s }
+					@blmutex.synchronize { @backlog << msg.to_json }
 					@sender.run
+				rescue EncodingError, JSON::JSONError => ex
+					$stderr.puts "Serialisation error: #{ex.message} (#{ex.class})"
+					$stderr.puts "Message: #{msg.inspect}"
+					$stderr.puts ex.backtrace.map { |l| "  #{l}" }
 				rescue StandardError => ex
 					$stderr.puts "Failed to send message: #{ex.message} (#{ex.class})"
 					$stderr.puts ex.backtrace.map { |l| "  #{l}" }

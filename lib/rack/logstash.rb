@@ -1,4 +1,3 @@
-require 'json'
 require 'rack/logstash/extended_request'
 require 'rack/logstash/transport'
 require 'ipaddr'
@@ -33,7 +32,7 @@ module Rack
 		private
 
 		def log_request(env, response)
-			@server.send(request_log_entry(env, response).to_json)
+			@server.send(request_log_entry(env, response))
 		end
 
 		def request_log_entry(env, response)
@@ -64,7 +63,7 @@ module Rack
 		end
 
 		def log_exception(env, ex)
-			@server.send(exception_log_entry(env, ex).to_json)
+			@server.send(exception_log_entry(env, ex))
 		end
 
 		def exception_log_entry(env, ex)
